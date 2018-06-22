@@ -15,6 +15,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import server.IGameServer;
@@ -37,18 +40,26 @@ public class GameClient extends Application implements IGameClient {
     private static IGameClient listener;
     private static IGameServer gameServer;
     private UUID gameId = null;
-    private boolean clickToReset = false;
     private PlayerColor playerColor = PlayerColor.NONE;
+    private boolean clickToReset = false;
 
     private Pane checkerRoot = new Pane();
+    private Text textGameId = new Text(10, 550, "");
+    private Text textStatus = new Text(500, 550, "");
 
     private Parent createContent() {
         Pane root = new Pane();
         root.getChildren().add(checkerRoot);
-
-        Shape gridShape = makeGrid();
-        root.getChildren().add(gridShape);
+        root.getChildren().add(makeGrid());
         root.getChildren().addAll(makeColumns());
+
+        textGameId.setFont(Font.font("Verdana",10));
+        textGameId.setFill(Color.ORANGE);
+        root.getChildren().add(textGameId);
+
+        textStatus.setFont(Font.font("Verdana", FontWeight.BOLD,10));
+        setTextStatus(PlayerColor.YELLOW);
+        root.getChildren().add(textStatus);
 
         return root;
     }
@@ -114,13 +125,14 @@ public class GameClient extends Application implements IGameClient {
             gameServer.startGame(gameId, COLUMNS, ROWS);
             return;
         }
-
         checker.setColumn(column);
         gameServer.placeChecker(gameId, checker);
     }
 
     private void endGame() throws RemoteException {
-        System.out.println(gameServer.getWinner(gameId));
+        String winner = gameServer.getWinner(gameId);
+        textStatus.setText(winner);
+        System.out.println(winner);
         clickToReset = true;
     }
 
@@ -130,7 +142,8 @@ public class GameClient extends Application implements IGameClient {
         listener = (IGameClient) UnicastRemoteObject.exportObject(this, 0);
 
         gameServer = (IGameServer)Naming.lookup("rmi://localhost:5099/connect4");
-        gameId = gameServer.registerGameClient(listener);
+        this.gameId = gameServer.registerGameClient(listener);
+        textGameId.setText("gameId: " + gameId.toString());
         System.out.println("CLIENT: New game joined with gameID " + gameId);
 
         gameServer.startGame(gameId, COLUMNS, ROWS);
@@ -159,10 +172,20 @@ public class GameClient extends Application implements IGameClient {
                 animation.play();
 
                 if (gameServer.hasEnded(gameId)) endGame();
+                else setTextStatus(checker.getColor());
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    private void setTextStatus(PlayerColor color) {
+        if (playerColor.equals(color)) {
+            textStatus.setText("Opponent's turn");
+        } else {
+            textStatus.setText("Your turn");
+        }
+        textStatus.setFill(color.equals(PlayerColor.RED) ? PlayerColor.YELLOW.getColor() : PlayerColor.RED.getColor());
     }
 
     @Override
@@ -173,6 +196,8 @@ public class GameClient extends Application implements IGameClient {
     @Override
     public void clearBoard() {
         Platform.runLater(() -> checkerRoot.getChildren().clear());
+        clickToReset = false;
+        setTextStatus(PlayerColor.YELLOW);
     }
 
     @Override

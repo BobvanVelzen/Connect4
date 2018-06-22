@@ -53,7 +53,7 @@ public class Game implements IGame {
     @Override
     public String getWinner() {
         if (hasEnded) {
-            return "Winner: " + (winner != null ? winner : "DRAW");
+            return (winner != null ? winner + " WINS!" : "DRAW");
         } else return "Game hasn't ended yet";
     }
 
