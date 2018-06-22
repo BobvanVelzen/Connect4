@@ -1,4 +1,4 @@
-package game;
+package main.game;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -11,6 +11,11 @@ public class Checker extends UnicastRemoteObject implements IChecker{
 
     public Checker(PlayerColor color) throws RemoteException {
         this.color = color;
+    }
+
+    public Checker(PlayerColor color, int column) throws RemoteException {
+        this.color = color;
+        this.column = column;
     }
 
     public PlayerColor getColor() {

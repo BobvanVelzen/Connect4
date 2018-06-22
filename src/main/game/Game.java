@@ -1,6 +1,6 @@
-package game;
+package main.game;
 
-import client.IGameClient;
+import main.client.IGameClient;
 import javafx.geometry.Point2D;
 
 import java.rmi.RemoteException;
@@ -29,18 +29,21 @@ public class Game implements IGame {
         startGame(columns, rows);
     }
 
-    public PlayerColor addPlayer(IGameClient gameClient) throws RemoteException {
+    @Override
+    public boolean addPlayer(IGameClient gameClient) throws RemoteException {
         switch (gameClients.size()){
             case 0:
                 gameClients.add(gameClient);
-                return PlayerColor.RED;
+                gameClient.assignPlayerColor(PlayerColor.RED);
+                break;
             case 1:
                 gameClients.add(gameClient);
-
                 IGameClient gc = gameClients.get(0);
-                return gc.getPlayerColor() != PlayerColor.YELLOW ? PlayerColor.YELLOW : PlayerColor.RED;
-            default: return PlayerColor.NONE;
+                gameClient.assignPlayerColor(gc.getPlayerColor() != PlayerColor.YELLOW ? PlayerColor.YELLOW : PlayerColor.RED);
+                break;
+            default: return false;
         }
+        return true;
     }
 
     private Optional<IChecker> getChecker(int column, int row) {
@@ -55,6 +58,10 @@ public class Game implements IGame {
         if (hasEnded) {
             return (winner != null ? winner + " WINS!" : "DRAW");
         } else return "Game hasn't ended yet";
+    }
+
+    public int getCheckersPlaced() {
+        return checkersPlaced;
     }
 
     @Override
@@ -155,5 +162,6 @@ public class Game implements IGame {
         this.turn = PlayerColor.RED;
         this.hasEnded = false;
         this.winner = null;
+        this.checkersPlaced = 0;
     }
 }

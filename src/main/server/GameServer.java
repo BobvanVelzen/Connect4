@@ -1,9 +1,9 @@
-package server;
+package main.server;
 
-import client.IGameClient;
-import game.Game;
-import game.IChecker;
-import game.PlayerColor;
+import main.client.IGameClient;
+import main.game.Game;
+import main.game.IChecker;
+import main.game.PlayerColor;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -22,26 +22,23 @@ public class GameServer extends UnicastRemoteObject implements IGameServer {
     @Override
     public UUID registerGameClient(IGameClient gameClient) throws RemoteException {
         UUID gameId = null;
-        PlayerColor playerColor = PlayerColor.NONE;
+        boolean added = false;
 
         for (Game game : games) {
-            playerColor = game.addPlayer(gameClient);
-            if (playerColor != PlayerColor.NONE){
+            added = game.addPlayer(gameClient);
+            if (added){
                 gameId = game.gameId;
                 System.out.println("SERVER: Game joined with gameID " + gameId);
                 break;
             }
         }
 
-        if (playerColor == PlayerColor.NONE){
+        if (!added){
             Game game = new Game(7, 6);
-            playerColor = game.addPlayer(gameClient);
+            game.addPlayer(gameClient);
             gameId = game.gameId;
             games.add(game);
-            gameClient.assignPlayerColor(playerColor);
             System.out.println("SERVER: New game created with gameID " + gameId);
-        } else {
-            gameClient.assignPlayerColor(playerColor);
         }
 
         return gameId;

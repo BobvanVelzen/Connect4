@@ -1,7 +1,7 @@
-package client;
+package main.client;
 
-import game.IChecker;
-import game.PlayerColor;
+import main.game.IChecker;
+import main.game.PlayerColor;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

@@ -1,8 +1,8 @@
-package client;
+package main.client;
 
-import game.Checker;
-import game.IChecker;
-import game.PlayerColor;
+import main.game.Checker;
+import main.game.IChecker;
+import main.game.PlayerColor;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -20,7 +20,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import server.IGameServer;
+import main.server.IGameServer;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -107,7 +107,7 @@ public class GameClient extends Application implements IGameClient {
             final int column = x;
             rect.setOnMouseClicked(e -> {
                 try {
-                    placeChecker(new Checker(playerColor), column);
+                    placeChecker(new Checker(playerColor, column));
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
                 }
@@ -119,13 +119,12 @@ public class GameClient extends Application implements IGameClient {
         return list;
     }
 
-    private void placeChecker(IChecker checker, int column) throws RemoteException {
+    private void placeChecker(IChecker checker) throws RemoteException {
         if (clickToReset) {
             clickToReset = false;
             gameServer.startGame(gameId, COLUMNS, ROWS);
             return;
         }
-        checker.setColumn(column);
         gameServer.placeChecker(gameId, checker);
     }
 

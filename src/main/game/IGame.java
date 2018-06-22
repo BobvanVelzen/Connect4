@@ -1,10 +1,13 @@
-package game;
+package main.game;
+
+import main.client.IGameClient;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.UUID;
 
 public interface IGame extends Remote {
+
+    boolean addPlayer(IGameClient gameClient) throws RemoteException;
 
     String getWinner() throws RemoteException;
 

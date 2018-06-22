@@ -1,8 +1,7 @@
-package server;
+package main.server;
 
-import client.IGameClient;
-import game.IChecker;
-import game.IGame;
+import main.client.IGameClient;
+import main.game.IChecker;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
