@@ -34,12 +34,12 @@ public class Game implements IGame {
         switch (gameClients.size()){
             case 0:
                 gameClients.add(gameClient);
-                gameClient.assignPlayerColor(PlayerColor.RED);
+                gameClient.setPlayerColor(PlayerColor.RED);
                 break;
             case 1:
                 gameClients.add(gameClient);
                 IGameClient gc = gameClients.get(0);
-                gameClient.assignPlayerColor(gc.getPlayerColor() != PlayerColor.YELLOW ? PlayerColor.YELLOW : PlayerColor.RED);
+                gameClient.setPlayerColor(gc.getPlayerColor() != PlayerColor.YELLOW ? PlayerColor.YELLOW : PlayerColor.RED);
                 break;
             default: return false;
         }
@@ -69,7 +69,7 @@ public class Game implements IGame {
         return this.hasEnded;
     }
 
-    private boolean checkRange(List<Point2D> points) throws RemoteException {
+    private boolean checkRange(List<Point2D> points) {
         int chain = 0;
 
         for (Point2D p : points) {
@@ -88,7 +88,7 @@ public class Game implements IGame {
         return false;
     }
 
-    private boolean gameEnded(int column, int row) throws RemoteException {
+    private boolean gameEnded(int column, int row) {
         List<Point2D> vertical = IntStream.rangeClosed(row - 3, row + 3)
                 .mapToObj(r -> new Point2D(column, r))
                 .collect(Collectors.toList());
@@ -115,7 +115,7 @@ public class Game implements IGame {
     }
 
     @Override
-    public IChecker placeChecker(IChecker checker) throws RemoteException {
+    public IChecker placeChecker(IChecker checker) {
         if (hasEnded) {
             hasEnded = false;
             return null;

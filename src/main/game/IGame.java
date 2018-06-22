@@ -2,18 +2,17 @@ package main.game;
 
 import main.client.IGameClient;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface IGame extends Remote {
+public interface IGame {
 
     boolean addPlayer(IGameClient gameClient) throws RemoteException;
 
-    String getWinner() throws RemoteException;
+    String getWinner();
 
-    boolean hasEnded() throws RemoteException;
+    boolean hasEnded();
 
-    IChecker placeChecker(IChecker checker) throws RemoteException;
+    IChecker placeChecker(IChecker checker);
 
-    void startGame(int columns, int rows) throws RemoteException;
+    void startGame(int columns, int rows);
 }

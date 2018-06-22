@@ -1,19 +1,18 @@
 package main.game;
 
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
+import java.io.Serializable;
 
-public class Checker extends UnicastRemoteObject implements IChecker{
+public class Checker implements IChecker, Serializable {
 
     private final PlayerColor color;
     private int column;
     private int row;
 
-    public Checker(PlayerColor color) throws RemoteException {
+    public Checker(PlayerColor color) {
         this.color = color;
     }
 
-    public Checker(PlayerColor color, int column) throws RemoteException {
+    public Checker(PlayerColor color, int column) {
         this.color = color;
         this.column = column;
     }

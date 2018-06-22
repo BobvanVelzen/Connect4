@@ -10,9 +10,9 @@ public interface IGameClient extends Remote {
 
     void updateChecker(IChecker checker) throws RemoteException;
 
-    void assignPlayerColor(PlayerColor color) throws RemoteException;
-
     void clearBoard() throws RemoteException;
+
+    void setPlayerColor(PlayerColor color) throws RemoteException;
 
     PlayerColor getPlayerColor() throws RemoteException;
 }

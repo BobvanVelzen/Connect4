@@ -1,17 +1,14 @@
 package main.game;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
+public interface IChecker {
 
-public interface IChecker extends Remote {
+    PlayerColor getColor();
 
-    PlayerColor getColor() throws RemoteException;
+    void setColumn(int column);
 
-    void setColumn(int column) throws RemoteException;
+    int getColumn();
 
-    int getColumn() throws RemoteException;
+    void setRow(int row);
 
-    void setRow(int row) throws RemoteException;
-
-    int getRow() throws RemoteException;
+    int getRow();
 }

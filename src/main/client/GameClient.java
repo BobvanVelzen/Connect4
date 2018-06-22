@@ -37,7 +37,6 @@ public class GameClient extends Application implements IGameClient {
     private static final int COLUMNS = 7;
     private static final int ROWS = 6;
 
-    private static IGameClient listener;
     private static IGameServer gameServer;
     private UUID gameId = null;
     private PlayerColor playerColor = PlayerColor.NONE;
@@ -138,7 +137,7 @@ public class GameClient extends Application implements IGameClient {
     @Override
     public void start(Stage primaryStage) throws RemoteException, MalformedURLException, NotBoundException {
 
-        listener = (IGameClient) UnicastRemoteObject.exportObject(this, 0);
+        IGameClient listener = (IGameClient) UnicastRemoteObject.exportObject(this, 0);
 
         gameServer = (IGameServer)Naming.lookup("rmi://localhost:5099/connect4");
         this.gameId = gameServer.registerGameClient(listener);
@@ -188,15 +187,15 @@ public class GameClient extends Application implements IGameClient {
     }
 
     @Override
-    public void assignPlayerColor(PlayerColor color) {
-        this.playerColor = color;
-    }
-
-    @Override
     public void clearBoard() {
         Platform.runLater(() -> checkerRoot.getChildren().clear());
         clickToReset = false;
         setTextStatus(PlayerColor.YELLOW);
+    }
+
+    @Override
+    public void setPlayerColor(PlayerColor color) {
+        this.playerColor = color;
     }
 
     @Override

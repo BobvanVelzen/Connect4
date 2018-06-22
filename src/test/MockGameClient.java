@@ -14,7 +14,7 @@ public class MockGameClient implements IGameClient {
     }
 
     @Override
-    public void assignPlayerColor(PlayerColor color) {
+    public void setPlayerColor(PlayerColor color) {
         this.playerColor = color;
     }
 
