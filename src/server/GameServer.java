@@ -62,14 +62,14 @@ public class GameServer extends UnicastRemoteObject implements IGameServer {
 
     @Override
     public void startGame(UUID id, int columns, int rows) throws RemoteException {
-        System.out.println("SERVER: startGame() is called on gameId " + id);
 
         for (Game game : games) {
             if (game.gameId.equals(id)){
-                game.reset(columns, rows);
+                game.startGame(columns, rows);
                 for (IGameClient gc : game.gameClients) {
                     gc.clearBoard();
                 }
+                System.out.println("SERVER: New game started on gameID " + id);
                 break;
             }
         }
@@ -79,7 +79,7 @@ public class GameServer extends UnicastRemoteObject implements IGameServer {
     public String getWinner(UUID id) {
         for (Game game : games) {
             if (game.gameId.equals(id)) {
-                return game.getWinner(id);
+                return game.getWinner();
             }
         }
         return "NO GAME FOUND";
@@ -89,7 +89,7 @@ public class GameServer extends UnicastRemoteObject implements IGameServer {
     public boolean hasEnded(UUID id) {
         for (Game game : games) {
             if (game.gameId.equals(id)) {
-                return game.hasEnded(id);
+                return game.hasEnded();
             }
         }
         return true;
@@ -99,7 +99,7 @@ public class GameServer extends UnicastRemoteObject implements IGameServer {
     public IChecker placeChecker(UUID id, IChecker checker) throws RemoteException {
         for (Game game : games) {
             if (game.gameId.equals(id)) {
-                checker = game.placeChecker(id, checker);
+                checker = game.placeChecker(checker);
                 broadcastChecker(id, checker);
                 break;
             }

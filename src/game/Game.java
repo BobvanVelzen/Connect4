@@ -26,7 +26,7 @@ public class Game implements IGame {
     private int checkersPlaced = 0;
 
     public Game(int columns, int rows) {
-        reset(columns, rows);
+        startGame(columns, rows);
     }
 
     public PlayerColor addPlayer(IGameClient gameClient) throws RemoteException {
@@ -51,12 +51,12 @@ public class Game implements IGame {
     }
 
     @Override
-    public String getWinner(UUID gameId) {
+    public String getWinner() {
         return "winner: " + (winner != null ? winner : "DRAW");
     }
 
     @Override
-    public boolean hasEnded(UUID gameId) {
+    public boolean hasEnded() {
         return this.hasEnded;
     }
 
@@ -67,7 +67,7 @@ public class Game implements IGame {
             int column = (int)p.getX();
             int row = (int)p.getY();
 
-            IChecker checker = getChecker(column, row).orElse(new Checker(turn.equals(PlayerColor.RED) ? PlayerColor.YELLOW : PlayerColor.RED));
+            IChecker checker = getChecker(column, row).orElse(new Checker(PlayerColor.NONE));
             if (checker.getColor() == turn) {
                 chain++;
                 if (chain == 4){
@@ -106,8 +106,11 @@ public class Game implements IGame {
     }
 
     @Override
-    public IChecker placeChecker(UUID id, IChecker checker) throws RemoteException {
-        hasEnded = false;
+    public IChecker placeChecker(IChecker checker) throws RemoteException {
+        if (hasEnded) {
+            hasEnded = false;
+            return null;
+        }
 
         if (checker.getColor() != turn)
             return null;
@@ -142,9 +145,12 @@ public class Game implements IGame {
         hasEnded = true;
     }
 
-    public void reset(int columns, int rows) {
+    @Override
+    public void startGame(int columns, int rows) {
         this.columns = columns;
         this.rows = rows;
         this.grid = new IChecker[columns][rows];
+        this.turn = PlayerColor.RED;
+        this.hasEnded = false;
     }
 }

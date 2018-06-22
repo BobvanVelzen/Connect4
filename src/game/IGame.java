@@ -6,9 +6,11 @@ import java.util.UUID;
 
 public interface IGame extends Remote {
 
-    String getWinner(UUID id) throws RemoteException;
+    String getWinner() throws RemoteException;
 
-    boolean hasEnded(UUID id) throws RemoteException;
+    boolean hasEnded() throws RemoteException;
 
-    IChecker placeChecker(UUID id, IChecker checker) throws RemoteException;
+    IChecker placeChecker(IChecker checker) throws RemoteException;
+
+    void startGame(int columns, int rows) throws RemoteException;
 }

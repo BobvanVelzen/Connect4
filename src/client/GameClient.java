@@ -131,7 +131,7 @@ public class GameClient extends Application implements IGameClient {
 
         gameServer = (IGameServer)Naming.lookup("rmi://localhost:5099/connect4");
         gameId = gameServer.registerGameClient(listener);
-        System.out.println("SERVER: New game joined with gameID " + gameId);
+        System.out.println("CLIENT: New game joined with gameID " + gameId);
 
         gameServer.startGame(gameId, COLUMNS, ROWS);
 
