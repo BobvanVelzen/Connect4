@@ -52,7 +52,9 @@ public class Game implements IGame {
 
     @Override
     public String getWinner() {
-        return "winner: " + (winner != null ? winner : "DRAW");
+        if (hasEnded) {
+            return "Winner: " + (winner != null ? winner : "DRAW");
+        } else return "Game hasn't ended yet";
     }
 
     @Override
@@ -152,5 +154,6 @@ public class Game implements IGame {
         this.grid = new IChecker[columns][rows];
         this.turn = PlayerColor.RED;
         this.hasEnded = false;
+        this.winner = null;
     }
 }
