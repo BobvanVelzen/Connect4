@@ -30,14 +30,18 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameClient extends Application implements IGameClient {
+
+    private static final Logger LOGGER = Logger.getLogger(GameClient.class.getName());
 
     private static final int TILE_SIZE = 80;
     private static final int COLUMNS = 7;
     private static final int ROWS = 6;
 
-    private static IGameServer gameServer;
+    private IGameServer gameServer;
     private UUID gameId = null;
     private PlayerColor playerColor = PlayerColor.NONE;
     private boolean clickToReset = false;
@@ -107,8 +111,8 @@ public class GameClient extends Application implements IGameClient {
             rect.setOnMouseClicked(e -> {
                 try {
                     placeChecker(new Checker(playerColor, column));
-                } catch (RemoteException e1) {
-                    e1.printStackTrace();
+                } catch (RemoteException re) {
+                    LOGGER.log(Level.SEVERE, re.getMessage());
                 }
             });
             
@@ -130,7 +134,7 @@ public class GameClient extends Application implements IGameClient {
     private void endGame() throws RemoteException {
         String winner = gameServer.getWinner(gameId);
         textStatus.setText(winner);
-        System.out.println(winner);
+        LOGGER.log(Level.INFO, winner);
         clickToReset = true;
     }
 
@@ -142,7 +146,7 @@ public class GameClient extends Application implements IGameClient {
         gameServer = (IGameServer)Naming.lookup("rmi://localhost:5099/connect4");
         this.gameId = gameServer.registerGameClient(listener);
         textGameId.setText("gameId: " + gameId.toString());
-        System.out.println("CLIENT: New game joined with gameID " + gameId);
+        LOGGER.log(Level.INFO, () -> "CLIENT: New game joined with gameID " + gameId);
 
         gameServer.startGame(gameId, COLUMNS, ROWS);
 
@@ -172,7 +176,7 @@ public class GameClient extends Application implements IGameClient {
                 if (gameServer.hasEnded(gameId)) endGame();
                 else setTextStatus(checker.getColor());
             } catch (RemoteException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage());
             }
         });
     }

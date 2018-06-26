@@ -31,7 +31,7 @@ class GameTest {
     }
 
     @Test
-    void endGame1() throws RemoteException {
+    void endGame1() {
         playRedWins();
 
         assertEquals("RED WINS!", game.getWinner());
@@ -39,7 +39,7 @@ class GameTest {
     }
 
     @Test
-    void endGame2() throws RemoteException {
+    void endGame2() {
         playYellowWins();
 
         assertEquals("YELLOW WINS!", game.getWinner());
@@ -47,7 +47,7 @@ class GameTest {
     }
 
     @Test
-    void endGame3() throws RemoteException {
+    void endGame3() {
         playDraw();
 
         assertEquals(16, ((Game)game).getCheckersPlaced());
@@ -56,13 +56,13 @@ class GameTest {
     }
 
     @Test
-    void endGame4() throws RemoteException {
+    void endGame4() {
         assertEquals("Game hasn't ended yet", game.getWinner());
         assertFalse(game.hasEnded());
     }
 
     @Test
-    void placeChecker1() throws RemoteException {
+    void placeChecker1() {
         game.startGame(2, 2);
         IChecker checker;
 
@@ -95,7 +95,7 @@ class GameTest {
     }
 
     @Test
-    void placeChecker2() throws RemoteException {
+    void placeChecker2() {
         playRedWins();
         assertTrue(game.hasEnded());
         assertEquals(7, ((Game)game).getCheckersPlaced());
@@ -105,13 +105,13 @@ class GameTest {
     }
 
     @Test
-    void startGame1() throws RemoteException {
+    void startGame1() {
         game.startGame(7, 6);
         assertEquals(0, ((Game)game).getCheckersPlaced());
     }
 
     @Test
-    void startGame2() throws RemoteException {
+    void startGame2() {
         startGame1();
         IChecker checker = new Checker(PlayerColor.RED);
 
@@ -123,7 +123,7 @@ class GameTest {
     }
 
     // METHODS
-    private void playRedWins() throws RemoteException {
+    private void playRedWins() {
         // R...
         // RY..
         // RY..
@@ -147,7 +147,7 @@ class GameTest {
         game.placeChecker(checker);
     }
 
-    private void playYellowWins() throws RemoteException {
+    private void playYellowWins() {
         // Y...
         // YR..
         // YR..
@@ -173,7 +173,7 @@ class GameTest {
         game.placeChecker(checker);
     }
 
-    private void playDraw() throws RemoteException {
+    private void playDraw() {
         // YYRR
         // RRYY
         // YYRR

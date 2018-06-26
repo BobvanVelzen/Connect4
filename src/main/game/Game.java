@@ -3,6 +3,7 @@ package main.game;
 import main.client.IGameClient;
 import javafx.geometry.Point2D;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +12,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class Game implements IGame {
+public class Game implements IGame, Serializable {
 
-    public List<IGameClient> gameClients = new ArrayList<>();
-    public UUID gameId = UUID.randomUUID();
+    private transient List<IGameClient> gameClients = new ArrayList<>();
+    private UUID gameId = UUID.randomUUID();
 
     private int columns;
     private int rows;
@@ -22,7 +23,7 @@ public class Game implements IGame {
     private PlayerColor winner;
     private boolean hasEnded = false;
 
-    private IChecker[][] grid;
+    private transient IChecker[][] grid;
     private int checkersPlaced = 0;
 
     public Game(int columns, int rows) {
@@ -164,4 +165,15 @@ public class Game implements IGame {
         this.winner = null;
         this.checkersPlaced = 0;
     }
+
+    @Override
+    public UUID getGameId() {
+        return this.gameId;
+    }
+
+    @Override
+    public List<IGameClient> getGameClients() {
+        return this.gameClients;
+    }
+
 }

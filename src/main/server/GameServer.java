@@ -3,17 +3,22 @@ package main.server;
 import main.client.IGameClient;
 import main.game.Game;
 import main.game.IChecker;
-import main.game.PlayerColor;
+import main.game.IGame;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameServer extends UnicastRemoteObject implements IGameServer {
 
-    private List<Game> games;
+    private static final Logger LOGGER = Logger.getLogger(GameServer.class.getName());
+
+    private transient List<IGame> games;
 
     GameServer() throws RemoteException {
         games = new ArrayList<>();
@@ -24,11 +29,12 @@ public class GameServer extends UnicastRemoteObject implements IGameServer {
         UUID gameId = null;
         boolean added = false;
 
-        for (Game game : games) {
+        for (IGame game : games) {
             added = game.addPlayer(gameClient);
             if (added){
-                gameId = game.gameId;
-                System.out.println("SERVER: Game joined with gameID " + gameId);
+                gameId = game.getGameId();
+                UUID finalGameId = gameId;
+                LOGGER.log(Level.INFO, () -> "SERVER: Game joined with gameID " + finalGameId);
                 break;
             }
         }
@@ -36,9 +42,10 @@ public class GameServer extends UnicastRemoteObject implements IGameServer {
         if (!added){
             Game game = new Game(7, 6);
             game.addPlayer(gameClient);
-            gameId = game.gameId;
+            gameId = game.getGameId();
             games.add(game);
-            System.out.println("SERVER: New game created with gameID " + gameId);
+            UUID finalGameId1 = gameId;
+            LOGGER.log(Level.INFO, () -> "SERVER: New game created with gameID " + finalGameId1);
         }
 
         return gameId;
@@ -47,9 +54,9 @@ public class GameServer extends UnicastRemoteObject implements IGameServer {
     @Override
     public void broadcastChecker(UUID id, IChecker checker) throws RemoteException {
 
-        for (Game game : games) {
-            if (game.gameId.equals(id)) {
-                for (IGameClient gc : game.gameClients) {
+        for (IGame game : games) {
+            if (game.getGameId().equals(id)) {
+                for (IGameClient gc : game.getGameClients()) {
                     gc.updateChecker(checker);
                 }
                 break;
@@ -60,13 +67,13 @@ public class GameServer extends UnicastRemoteObject implements IGameServer {
     @Override
     public void startGame(UUID id, int columns, int rows) throws RemoteException {
 
-        for (Game game : games) {
-            if (game.gameId.equals(id)){
+        for (IGame game : games) {
+            if (game.getGameId().equals(id)){
                 game.startGame(columns, rows);
-                for (IGameClient gc : game.gameClients) {
+                for (IGameClient gc : game.getGameClients()) {
                     gc.clearBoard();
                 }
-                System.out.println("SERVER: New game started on gameID " + id);
+                LOGGER.log(Level.INFO, () -> "SERVER: New game started on gameID " + id);
                 break;
             }
         }
@@ -74,8 +81,8 @@ public class GameServer extends UnicastRemoteObject implements IGameServer {
 
     @Override
     public String getWinner(UUID id) {
-        for (Game game : games) {
-            if (game.gameId.equals(id)) {
+        for (IGame game : games) {
+            if (game.getGameId().equals(id)) {
                 return game.getWinner();
             }
         }
@@ -84,8 +91,8 @@ public class GameServer extends UnicastRemoteObject implements IGameServer {
 
     @Override
     public boolean hasEnded(UUID id) {
-        for (Game game : games) {
-            if (game.gameId.equals(id)) {
+        for (IGame game : games) {
+            if (game.getGameId().equals(id)) {
                 return game.hasEnded();
             }
         }
@@ -94,13 +101,30 @@ public class GameServer extends UnicastRemoteObject implements IGameServer {
 
     @Override
     public IChecker placeChecker(UUID id, IChecker checker) throws RemoteException {
-        for (Game game : games) {
-            if (game.gameId.equals(id)) {
-                checker = game.placeChecker(checker);
+        IChecker c = checker;
+        for (IGame game : games) {
+            if (game.getGameId().equals(id)) {
+                c = game.placeChecker(checker);
                 broadcastChecker(id, checker);
                 break;
             }
         }
-        return checker;
+        return c;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) return true;
+        if (!(o instanceof GameServer)) {
+            return false;
+        }
+        GameServer gs = (GameServer) o;
+        return games == gs.games;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(games);
     }
 }

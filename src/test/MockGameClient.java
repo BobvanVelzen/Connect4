@@ -10,7 +10,7 @@ public class MockGameClient implements IGameClient {
 
     @Override
     public void updateChecker(IChecker checker) {
-
+        // Not Tested
     }
 
     @Override
@@ -20,7 +20,7 @@ public class MockGameClient implements IGameClient {
 
     @Override
     public void clearBoard() {
-
+        // Not Tested
     }
 
     @Override

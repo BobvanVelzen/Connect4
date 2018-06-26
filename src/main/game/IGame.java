@@ -3,6 +3,8 @@ package main.game;
 import main.client.IGameClient;
 
 import java.rmi.RemoteException;
+import java.util.List;
+import java.util.UUID;
 
 public interface IGame {
 
@@ -15,4 +17,8 @@ public interface IGame {
     IChecker placeChecker(IChecker checker);
 
     void startGame(int columns, int rows);
+
+    UUID getGameId();
+
+    List<IGameClient> getGameClients();
 }
